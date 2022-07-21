@@ -9,7 +9,7 @@
             cols="2"           
           >
             <v-text-field
-              v-model="autor.id"
+              v-model="usuario.id"
               placeholder="Código"
               label="Código"
               disabled
@@ -20,7 +20,7 @@
         <v-row>
           <v-col>
             <v-text-field
-              v-model="autor.nome"
+              v-model="usuario.nome"
               placeholder="Nome"
               label="Nome"
               outlined
@@ -30,7 +30,7 @@
         <v-row>
           <v-col>
             <v-text-field
-              v-model="autor.email"
+              v-model="usuario.email"
               placeholder="Email"
               label="Email"
               outlined
@@ -61,22 +61,25 @@ export default {
   name: 'CadastroAutoresPage',
   data () {
     return {
-      autor: {
-        id: null,
+      usuario: {
         nome: null,
-        email: null
-
+        email: null,
       }
     }
   },
   methods: {
     async cadastrar () {
-      let autor = {
-        nome: this.autor.nome,
-        email: this.autor.email
+      try {
+      let usuario = {
+        nome: this.usuario.nome,
+        email: this.usuario.email
       };
-      let response = await this.$axios.$post('http://localhost:3333/autores', autor);
-      console.log(response);
+      await this.$axios.$post('http://localhost:3333/autores', usuario);
+      this.$toast.success('Cadastro realizado com sucesso!');
+      this.$router.push('/autores');
+      } catch (error) {
+        this.$toast.error('Ocorreu um erro ao realizar o cadastro!');
+      }
     }
   }
 }

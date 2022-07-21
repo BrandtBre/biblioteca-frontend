@@ -103,22 +103,22 @@ export default {
           to: '/home'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-book-open-page-variant',
           title: 'Livros',
           to: '/livros'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-bookshelf',
           title: 'Categorias',
           to: '/categorias'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-fountain-pen',
           title: 'Autores',
           to: '/autores'
         },
         {
-          icon: 'mdi-chart-bubble',
+          icon: 'mdi-account',
           title: 'Usuarios',
           to: '/usuarios'
         }

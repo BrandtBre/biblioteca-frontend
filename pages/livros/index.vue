@@ -1,13 +1,15 @@
 <template>
   <v-container>
-    <h1>Consulta de Autores</h1>
+    <h1>Consulta de Livros</h1>
     <hr>
     <v-container>
       <v-row>
         <v-col>
           <v-btn
             outlined
-            @click="getAutores"
+            @click="getLivros"
+            color="blue"
+            
           >
             Pesquisar
           </v-btn>
@@ -15,8 +17,10 @@
         <v-col>
           <v-btn
             style="margin-left: -80%"
-            outlined
-            to="/autores/cadastro"
+            outlined            
+            to="/livros/cadastro"
+            color="green"
+            
           >
             Cadastrar
           </v-btn>
@@ -26,24 +30,24 @@
     <v-container>
       <v-data-table
         :headers="headers"
-        :items="autores"
+        :items="livros"
         :items-per-page="10"
         class="elevation-1"
       >
         <template v-slot:item.actions="{ item }">
-              <v-icon
-                small
-                class="mr-2"
-                @click="editItem(item)"
-              >
-                mdi-pencil
-              </v-icon>
-              <v-icon
-                small
-                @click="deletar(item)"
-              >
-                mdi-delete
-              </v-icon>
+          <v-icon
+            small
+            class="mr-2"
+            @click="editItem(item)"
+          >
+            mdi-pencil
+          </v-icon>
+          <v-icon
+            small
+            @click="deletar(item)"
+          >
+            mdi-delete
+          </v-icon>
         </template>
       </v-data-table>
     </v-container>
@@ -52,7 +56,7 @@
 
 <script>
 export default {
-  name: 'ConsultaAutoresPage',
+  name: 'ConsultaLivrosPage',
   data () {
     return {
       headers: [
@@ -63,36 +67,47 @@ export default {
           value: 'id', //é o dado que essa coluna vai receber
         },
         {
-          text: 'Nome do autor',
+          text: 'Titulo',
           align: 'center',
           sortable: false,
-          value: 'nome',
+          value: 'titulo',
         },
         {
-          text: 'Email para contato',
+          text: 'Sinopse',
           align: 'center',
           sortable: false,
-          value: 'email'
+          value: 'sinopse',
+        },
+        {
+          text: 'Nome da Categoria',
+          align: 'center',
+          sortable: false,
+          value: 'categoria.nome'
+        },
+        {
+          text: 'Autor',    
+          align: 'center',
+          sortable: false,
+          value: 'autor.nome'    
         },
         {text: "", value: "actions"}
       ],
-      autores: []
+
+      livros: []
     }
   },
 
   created () {
-    this.getAutores()
+    this.getLivros()
+    
   },
-  
   methods: {
-    async getAutores () {
-      this.autores = await this.$axios.$get('http://localhost:3333/autores');
-      this.$toast('Aqui esta sua requisição')
+    async getLivros () {
+      this.livros = await this.$axios.$get('http://localhost:3333/livros');
     },
-
     async deletar (autor) {
-      if (confirm(`Deseja deletar o autor id ${autor.id} - ${autor.nome}?`)) {
-        let response = await this.$axios.$post('http://localhost:3333/autores/deletar', { id: autor.id });
+      if (confirm(`Deseja deletar o livro id ${autor.id} - ${autor.titulo}?`)) {
+        let response = await this.$axios.$post('http://localhost:3333/livros/deletar', { id: autor.id });
         this.$toast(response.message)
         this.getAutores();
       }

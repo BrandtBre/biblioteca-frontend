@@ -91,15 +91,20 @@ export default {
   },
   methods: {
     async cadastrar () {
+      try {
       let usuario = {
         nome: this.usuario.nome,
         cpfcnpj: this.usuario.cpfcnpj,
         email: this.usuario.email,
         telefone: this.usuario.telefone
       };
-      console.log(usuario.cpfcnpj);
-      let response = await this.$axios.$post('http://localhost:3333/usuarios', usuario);
-      console.log(response);
+      await this.$axios.$post('http://localhost:3333/usuarios', usuario);
+      this.$toast.success('Cadastro realizado com sucesso!');
+      this.$router.push('/usuarios');
+      } catch (error) {
+        this.$toast.error('Ocorreu um erro ao realizar o cadastro!');
+      }
+
     }
   }
 }

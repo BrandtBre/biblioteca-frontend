@@ -59,11 +59,16 @@ export default {
   },
   methods: {
     async cadastrar () {
+      try {
       let categoria = {
         nome: this.categoria.nome
       };
-      let response = await this.$axios.$post('http://localhost:3333/categorias', categoria);
-      console.log(response);
+      await this.$axios.$post('http://localhost:3333/categorias', categoria);
+      this.$toast.success('Cadastro realizado com sucesso!');
+      this.$router.push('/categorias');
+      } catch (error) {
+        this.$toast.error('Ocorreu um erro ao realizar o cadastro!');
+      }
     }
   }
 }

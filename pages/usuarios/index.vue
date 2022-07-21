@@ -33,7 +33,23 @@
         :items="usuarios"
         :items-per-page="10"
         class="elevation-1"
-      ></v-data-table>
+      >
+        <template v-slot:item.actions="{ item }">
+            <v-icon
+              small
+              class="mr-2"
+              @click="editItem(item)"
+            >
+              mdi-pencil
+            </v-icon>
+            <v-icon
+              small
+              @click="deletar(item)"
+            >
+              mdi-delete
+            </v-icon>
+          </template>   
+      </v-data-table>
     </v-container>
   </v-container>
 </template>
@@ -74,6 +90,7 @@ export default {
           sortable: false,
           value: 'telefone',
         },
+        {text: "", value: "actions"}
       ],
       usuarios: []
     }
@@ -85,6 +102,13 @@ export default {
   methods: {
     async getUsuarios () {
       this.usuarios = await this.$axios.$get('http://localhost:3333/usuarios');
+    },
+    async deletar (autor) {
+      if (confirm(`Deseja deletar o usuario id ${autor.id} - ${autor.nome}?`)) {
+        let response = await this.$axios.$post('http://localhost:3333/usuarios/deletar', { id: autor.id });
+        this.$toast(response.message)
+        this.getAutores();
+      }
     }
   }
 }
