@@ -12,6 +12,9 @@
             
           >
             Pesquisar
+            <v-icon style="margin-left: 5%">
+              mdi-magnify
+            </v-icon>
           </v-btn>
         </v-col>
         <v-col>
@@ -23,6 +26,9 @@
             
           >
             Cadastrar
+            <v-icon style="margin-left: 5%">
+              mdi-plus-circle-outline
+            </v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -104,11 +110,23 @@ export default {
       this.usuarios = await this.$axios.$get('http://localhost:3333/usuarios');
     },
     async deletar (autor) {
+      try {
       if (confirm(`Deseja deletar o usuario id ${autor.id} - ${autor.nome}?`)) {
         let response = await this.$axios.$post('http://localhost:3333/usuarios/deletar', { id: autor.id });
         this.$toast(response.message)
-        this.getAutores();
+        this.getUsuarios();
       }
+      } catch (error) {
+        this.$toast.error('Ocorreu um erro ao deletar o registro');
+      }
+
+    },
+    
+    async editItem (categoria) {
+      this.$router.push({
+        name: 'usuarios-cadastro',
+        params: { id: categoria.id }
+      });
     }
   }
 }

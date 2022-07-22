@@ -8,10 +8,13 @@
           <v-btn
             outlined
             @click="getCategorias"
-            color="blue"
-            
+            color="blue"     
+                 
           >
             Pesquisar
+            <v-icon style="margin-left: 5%">
+              mdi-magnify
+            </v-icon>
           </v-btn>
         </v-col>
         <v-col>
@@ -23,6 +26,9 @@
             
           >
             Cadastrar
+            <v-icon style="margin-left: 5%">
+              mdi-plus-circle-outline
+            </v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -86,12 +92,25 @@ export default {
       this.categorias = await this.$axios.$get('http://localhost:3333/categorias');
     },
     async deletar (autor) {
-      if (confirm(`Deseja deletar a categoria id ${autor.id} - ${autor.nome}?`)) {
-        let response = await this.$axios.$post('http://localhost:3333/categorias/deletar', { id: autor.id });
-        this.$toast(response.message)
-        this.getAutores();
+      try {
+        if (confirm(`Deseja deletar o registro id ${categoria.id} - ${categoria.nome}?`)) {
+          let response = await this.$axios.$post('http://localhost:3333/categorias/deletar', { id: categoria.id });
+          this.$toast.success(response.message)
+          this.getCategorias();
+        }
+      } catch (error) {
+        this.$toast.error('Ocorreu um erro ao deletar o registro');
       }
+
+    },
+
+    async editItem (categoria) {
+      this.$router.push({
+        name: 'categorias-cadastro',
+        params: { id: categoria.id }
+      });
     }
+
   }
 }
 </script>

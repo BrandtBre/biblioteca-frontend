@@ -10,6 +10,9 @@
             @click="getAutores"
           >
             Pesquisar
+            <v-icon style="margin-left: 5%">
+              mdi-magnify
+            </v-icon>
           </v-btn>
         </v-col>
         <v-col>
@@ -19,6 +22,9 @@
             to="/autores/cadastro"
           >
             Cadastrar
+            <v-icon style="margin-left: 5%">
+              mdi-plus-circle-outline
+            </v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -87,15 +93,26 @@ export default {
   methods: {
     async getAutores () {
       this.autores = await this.$axios.$get('http://localhost:3333/autores');
-      this.$toast('Aqui esta sua requisição')
     },
 
     async deletar (autor) {
-      if (confirm(`Deseja deletar o autor id ${autor.id} - ${autor.nome}?`)) {
-        let response = await this.$axios.$post('http://localhost:3333/autores/deletar', { id: autor.id });
-        this.$toast(response.message)
-        this.getAutores();
+      try {
+        if (confirm(`Deseja deletar o autor id ${autor.id} - ${autor.nome}?`)) {
+          let response = await this.$axios.$post('http://localhost:3333/autores/deletar', { id: autor.id });
+          this.$toast(response.message)
+          this.getAutores();
+        }
+      } catch (error) {
+        this.$toast.error('Ocorreu um erro ao deletar o registro');
       }
+
+    },
+
+    async editItem (categoria) {
+      this.$router.push({
+        name: 'autores-cadastro',
+        params: { id: categoria.id }
+      });
     }
   }
 }

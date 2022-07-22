@@ -12,6 +12,9 @@
             
           >
             Pesquisar
+            <v-icon style="margin-left: 5%">
+              mdi-magnify
+            </v-icon>
           </v-btn>
         </v-col>
         <v-col>
@@ -23,6 +26,9 @@
             
           >
             Cadastrar
+            <v-icon style="margin-left: 5%">
+              mdi-plus-circle-outline
+            </v-icon>
           </v-btn>
         </v-col>
       </v-row>
@@ -106,11 +112,22 @@ export default {
       this.livros = await this.$axios.$get('http://localhost:3333/livros');
     },
     async deletar (autor) {
-      if (confirm(`Deseja deletar o livro id ${autor.id} - ${autor.titulo}?`)) {
-        let response = await this.$axios.$post('http://localhost:3333/livros/deletar', { id: autor.id });
-        this.$toast(response.message)
-        this.getAutores();
+      try {
+        if (confirm(`Deseja deletar o livro id ${autor.id} - ${autor.titulo}?`)) {
+          let response = await this.$axios.$post('http://localhost:3333/livros/deletar', { id: autor.id });
+          this.$toast(response.message)
+          this.getLivros();
+        }
+      } catch (error) {
+        this.$toast.error('Ocorreu um erro ao deletar o registro');
       }
+
+    },
+    async editItem (categoria) {
+      this.$router.push({
+        name: 'livros-cadastro',
+        params: { id: categoria.id }
+      });
     }
   }
 }

@@ -2,7 +2,7 @@
   <v-container>
     <h1 style="">Cadastro de Categorias</h1>
     <hr>
-    <v-form>
+    <v-form v-model="valid">
       <v-container>
         <v-row>
           <v-col
@@ -23,6 +23,8 @@
               v-model="categoria.nome"
               placeholder="Nome"
               label="Nome"
+              :rules="rule"
+              required
               outlined
             />
           </v-col>
@@ -51,24 +53,50 @@ export default {
   name: 'CadastroCategoriasPage',
   data () {
     return {
+      valid: false,
       categoria: {
         id: null,
         nome: null
-      }
+      },
+      rule: [
+        v => !!v || 'Esse campo é obrigatório'
+      ]
     }
   },
+
+  created () {
+    if (this.$route?.params?.id) {
+      this.getById(this.$route.params.id)
+    }
+  },
+
   methods: {
     async cadastrar () {
       try {
+      if (!this.valid) {
+        return this.$toast.warning('O formulário de cadastro não é válido!')
+      }
       let categoria = {
         nome: this.categoria.nome
       };
-      await this.$axios.$post('http://localhost:3333/categorias', categoria);
-      this.$toast.success('Cadastro realizado com sucesso!');
+      
+      if (!this.categoria.id) {
+        await this.$axios.$post('http://localhost:3333/categorias', categoria);
+        this.$toast.success('Cadastro realizado com sucesso!');
+        return this.$router.push('/categorias');
+      }
+      
+      
+      await this.$axios.$post(`http://localhost:3333/categorias/${this.categoria.id}`, categoria);
+      this.$toast.success('Cadastro atualizado com sucesso!');
       this.$router.push('/categorias');
       } catch (error) {
         this.$toast.error('Ocorreu um erro ao realizar o cadastro!');
       }
+    },
+
+    async getById (id) {
+      this.categoria = await this.$axios.$get(`http://localhost:3333/categorias/${id}`);
     }
   }
 }

@@ -121,6 +121,11 @@ export default {
           icon: 'mdi-account',
           title: 'Usuarios',
           to: '/usuarios'
+        },
+        {
+          icon: 'mdi-book-search',
+          title: 'Consultas de Livros',
+          to: '/consulta-livros'
         }
       ],
       miniVariant: false,
