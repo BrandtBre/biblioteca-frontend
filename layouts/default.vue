@@ -126,6 +126,11 @@ export default {
           icon: 'mdi-book-search',
           title: 'Consultas de Livros',
           to: '/consulta-livros'
+        },
+        {
+          icon: 'mdi-alarm-panel',
+          title: 'Carculadora',
+          to: '/calculadora'
         }
       ],
       miniVariant: false,
