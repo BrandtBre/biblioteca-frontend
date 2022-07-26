@@ -131,6 +131,11 @@ export default {
           icon: 'mdi-alarm-panel',
           title: 'Carculadora',
           to: '/calculadora'
+        },
+        {
+          icon: 'mdi-book-clock',
+          title: 'Emprestimos',
+          to: '/emprestimos'
         }
       ],
       miniVariant: false,
