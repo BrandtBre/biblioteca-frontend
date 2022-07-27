@@ -32,7 +32,7 @@
     <v-container>
       <v-data-table
         :headers="headers"
-        :items="autores"
+        :items="emprestimos"
         :items-per-page="10"
         class="elevation-1"
       >
@@ -40,15 +40,21 @@
               <v-icon
                 small
                 class="mr-2"
-                @click="editItem(item)"
+                @click="viewItem(item)"
               >
-                mdi-pencil
+                mdi-magnify
               </v-icon>
               <v-icon
                 small
                 @click="deletar(item)"
               >
                 mdi-delete
+              </v-icon>
+              <v-icon
+                small
+                @click="devolucao(item)"
+              >
+                mdi-check
               </v-icon>
         </template>
       </v-data-table>
@@ -58,9 +64,12 @@
 
 <script>
 export default {
-  name: 'ConsultaAutoresPage',
+  name: 'ConsultaCadastrosPage',
   data () {
     return {
+      devolver: {
+        devolucao: new Date(Date.now()).toISOString().substring(0,10)
+      },
       headers: [
         {
           text: 'Código', //nome da coluna
@@ -69,7 +78,7 @@ export default {
           value: 'id', //é o dado que essa coluna vai receber
         },
         {
-          text: 'Id do Usuário',
+          text: 'Id do Usuario',
           align: 'center',
           sortable: false,
           value: 'idUsuario',
@@ -80,25 +89,25 @@ export default {
           sortable: false,
           value: 'prazo'
         },
-        {
-          text: 'Devolução',
-          align: 'center',
-          sortable: false,
-          value: 'devolucao'
-        },
         {text: "", value: "actions"}
       ],
-      emprestimos: []
+      emprestimos: [],
+      livros: []
     }
   },
 
   created () {
     this.getEmprestimos()
+    this.getLivros()
   },
   
   methods: {
     async getEmprestimos () {
       this.emprestimos = await this.$axios.$get('http://localhost:3333/emprestimos');
+    },
+
+    async getLivros () {
+      this.livros = await this.$axios.$get('http://localhost:3333/livros');
     },
 
     async deletar (emprestimo) {
@@ -114,10 +123,22 @@ export default {
 
     },
 
-    async editItem (categoria) {
+    async devolucao (item) {
+      try {   
+        await this.$axios.$post(`http://localhost:3333/emprestimos/${item.id}`, this.devolver);
+        this.$toast.success('Livro devolvido com sucesso!');
+        return this.$router.push('/emprestimos');
+
+      } catch (error) {
+        console.log(error)
+        this.$toast.error('Ocorreu um erro ao realizar a devolução do registro');
+      }
+    },
+
+    async viewItem (emprestimo) {
       this.$router.push({
-        name: 'autores-cadastro',
-        params: { id: categoria.id }
+        name: 'emprestimos-cadastro',
+        params: { id: emprestimo.id }
       });
     }
   }

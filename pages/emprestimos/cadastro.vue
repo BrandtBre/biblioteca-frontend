@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <h1 style="">Cadastro de Autores</h1>
+    <h1 style="">Cadastro de Emprestimos</h1>
     <hr>
     <v-form v-model="valid">
       <v-container>
@@ -9,7 +9,7 @@
             cols="2"           
           >
             <v-text-field
-              v-model="autor.id"
+              v-model="emprestimo.id"
               placeholder="Código"
               label="Código"
               disabled
@@ -19,25 +19,53 @@
         </v-row>
         <v-row>
           <v-col>
-            <v-text-field
-              v-model="autor.nome"
-              placeholder="Nome"
-              label="Nome"
-              :rules="rule"
+            <v-date-picker
+              v-model="emprestimo.prazo"
               required
               outlined
+              :disabled="desabilitar"
             />
           </v-col>
         </v-row>
         <v-row>
           <v-col>
             <v-text-field
-              v-model="autor.email"
-              placeholder="Email"
-              label="Email"
-              :rules="rule"
+              v-model="emprestimo.devolucao"
+              placeholder="Devolução"
+              label="Devolução"
               required
               outlined
+              disabled
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-autocomplete
+              v-model="emprestimo.idUsuario"
+              :items="usuarios"
+              outlined
+              :disabled="desabilitar"
+              label="Usuarios"
+              item-text="nome"
+              item-value="id"
+              color="blueviolet"
+            />
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-autocomplete
+              multiple
+              v-model="emprestimo.livros"
+              :items="livros"
+              outlined
+              :disabled="desabilitar"
+              label="Livros"
+              item-text="titulo"
+              item-value="id"
+              :rules="rule"
+              color="blueviolet"
             />
           </v-col>
         </v-row>
@@ -45,7 +73,7 @@
     </v-form>
     <v-btn
       outlined
-      to="/autores"
+      to="/emprestimos"
       color="red"
     >
       Cancelar
@@ -62,14 +90,21 @@
 
 <script>
 export default {
-  name: 'CadastroAutoresPage',
+  name: 'CadastroEmprestimoPage',
   data () {
     return {
+      desabilitar: false,
       valid: false,
-      autor: {
+      idLivro: false,
+      idUsuarios: false,
+      livros: [],
+      usuarios: [],
+      emprestimo: {
         id: null,
-        nome: null,
-        email: null,
+        prazo: null,
+        devolucao: null,
+        idUsuario: null,
+        livros: []
       },
       rule: [
         v => !!v || 'Esse campo é obrigatório'
@@ -78,9 +113,14 @@ export default {
   },
 
   created () {
+    this.getUsuarios();
     if (this.$route?.params?.id) {
+      this.getLivros();
       this.getById(this.$route.params.id)
-    }
+      this.desabilitar = true;
+      return;
+    };
+    this.getLivrosDisponiveis();
   },
 
   methods: {
@@ -89,27 +129,41 @@ export default {
         if (!this.valid) {
           return this.$toast.warning('O formulário de cadastro não é válido!')
         }
-        let autor = {
-          nome: this.autor.nome,
-          email: this.autor.email
+        let emprestimo = {
+          prazo: this.emprestimo.prazo,
+          devolucao: this.emprestimo.devolucao,
+          idUsuario: this.emprestimo.idUsuario,
+          livros: this.emprestimo.livros
         };
 
-        if (!this.autor.id) {
-          await this.$axios.$post('http://localhost:3333/autores', autor);
-          this.$toast.success('Cadastro realizado com sucesso!');
-          return this.$router.push('/autores');
-        }
+        if (!this.emprestimo.id) {
+          await this.$axios.$post('http://localhost:3333/emprestimos', emprestimo);
+          this.$toast.success('Emprestimo realizado com sucesso!');
+          return this.$router.push('/emprestimos');
+        };
 
-        await this.$axios.$post(`http://localhost:3333/autores/${this.autor.id}`, autor);
-        this.$toast.success('Cadastro atualizado com sucesso!');
-        return this.$router.push('/autores');
+        await this.$axios.$post(`http://localhost:3333/emprestimos/${this.emprestimo.id}`, emprestimo);
+        this.$toast.success('Emprestimo atualizado com sucesso!');
+        return this.$router.push('/emprestimos');
       } catch (error) {
-        this.$toast.error('Ocorreu um erro ao realizar o cadastro!');
+        this.$toast.error('Ocorreu um erro ao realizar o emprestimo!');
       }
     },
 
+    async getLivros () {
+      this.livros = await this.$axios.$get(`http://localhost:3333/livros`);
+    },
+
+    async getLivrosDisponiveis () {
+      this.livros = await this.$axios.$get(`http://localhost:3333/livros-disponiveis`);
+    },
+
+    async getUsuarios () {
+      this.usuarios = await this.$axios.$get(`http://localhost:3333/usuarios`);
+    },
+
     async getById (id) {
-      this.autor = await this.$axios.$get(`http://localhost:3333/autores/${id}`);
+      this.emprestimo = await this.$axios.$get(`http://localhost:3333/emprestimos/${id}`);
     }
   }
 }
